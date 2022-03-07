@@ -39,16 +39,29 @@ def step_livestream(context):
 
 @then('you need to execute the start livestream api')
 def step_livestream(context):
-    context.startLive = requests.post(context.url+apiResources.startLivestream, headers=context.headers,
-                                      json={'channel_id': context.channelId})
-    # print(context.startLive.json())
-    startMessage = context.startLive.json()['message']
-    assert startMessage == "Success", startMessage
-    print(startMessage)
-    StartChannelId = context.startLive.json()['data']['channel_id']
-    assert context.channelId == StartChannelId
+    try:
+        context.startLive = requests.post(context.url+apiResources.startLivestream, headers=context.headers,
+                                          json={'channel_id': context.channelId})
+        # print(context.startLive.json())
+        startMessage = context.startLive.json()['message']
+        assert startMessage == "Success", startMessage
+        print(startMessage)
+        StartChannelId = context.startLive.json()['data']['channel_id']
+        assert context.channelId == StartChannelId
 
 
+    except AssertionError:
+
+        context.endLive = requests.post(context.url + apiResources.endLivestream, headers=context.headers,
+                                        json={'channel_id': context.channelId})
+
+        # print(context.endLive.text)
+        print(context.endLive.status_code)
+        endMessage = context.endLive.json()['message']
+        endChannelId = context.endLive.json()['data']['channel_id']
+        assert endMessage == 'Success'
+        assert context.channelId == endChannelId
+        raise AssertionError
 
 @then('end the livestream')
 def step_livestream(context):
