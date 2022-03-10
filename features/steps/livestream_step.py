@@ -1,38 +1,19 @@
 import requests
 from behave import *
 from utilities.resources import *
+from utilities.payload import *
 
 
 @given('you already login')
 def step_livestream(context):
     assert context.loginToken is not None
 
-    context.headers = {
-        'X-kumu-Token': context.loginToken,
-        'Device-Id': 'D90E03B9B2B64F7A9502BF2A4C41FE79',
-        'Device-Type': 'ios',
-        'Version-Code': '1237',
-        'X-kumu-UserId': context.guid,
-        'Content-Type': 'application/json'
-    }
-
-    context.payloads = {
-        "channel_title": "Sample create live stream",
-        "category": "",
-        "description": "test",
-        "time": "",
-        "language": "",
-        "landscape": 0,
-        "cover_image": "",
-        "rtmp": 0,
-        "default_setting": "[\n '1',\n '3'\n]",
-        "video": 101,
-        "hashtag": ""
-    }
+    context.login_extend_headers = context.log_account_main
+    context.livestream_payloads = livestream_paylaods()
 
 @when('creating a livestream')
 def step_livestream(context):
-    context.createLive = requests.post(context.url+apiResources.createLivestream, headers=context.headers, json=context.payloads)
+    context.createLive = requests.post(context.url+apiResources.createLivestream, headers=context.login_extend_headers, json=context.livestream_payloads)
     # print(context.createLive.json())
     context.channelId = context.createLive.json()['data']['channel_id']
     assert context.channelId is not None
@@ -40,7 +21,7 @@ def step_livestream(context):
 @then('you need to execute the start livestream api')
 def step_livestream(context):
     try:
-        context.startLive = requests.post(context.url+apiResources.startLivestream, headers=context.headers,
+        context.startLive = requests.post(context.url+apiResources.startLivestream, headers=context.login_extend_headers,
                                           json={'channel_id': context.channelId})
         # print(context.startLive.json())
         startMessage = context.startLive.json()['message']
@@ -52,7 +33,7 @@ def step_livestream(context):
 
     except AssertionError:
 
-        context.endLive = requests.post(context.url + apiResources.endLivestream, headers=context.headers,
+        context.endLive = requests.post(context.url + apiResources.endLivestream, headers=context.login_extend_headers,
                                         json={'channel_id': context.channelId})
 
         # print(context.endLive.text)
@@ -65,7 +46,7 @@ def step_livestream(context):
 
 @then('end the livestream')
 def step_livestream(context):
-    context.endLive = requests.post(context.url+apiResources.endLivestream, headers=context.headers,
+    context.endLive = requests.post(context.url+apiResources.endLivestream, headers=context.login_extend_headers,
                                     json={'channel_id': context.channelId})
 
     print(context.endLive.text)
