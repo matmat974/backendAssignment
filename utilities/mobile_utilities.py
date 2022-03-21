@@ -4,7 +4,7 @@ from dotenv import load_dotenv, find_dotenv
 from utilities.resources import *
 from utilities.payload import *
 
-from payload import login_extended_headers
+
 
 load_dotenv(find_dotenv())
 
