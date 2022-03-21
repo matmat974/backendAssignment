@@ -24,11 +24,11 @@ def step_livestream(context):
         context.startLive = requests.post(context.url+apiResources.startLivestream, headers=context.login_extend_headers,
                                           json={'channel_id': context.channelId})
         # print(context.startLive.json())
-        startMessage = context.startLive.json()['message']
-        assert startMessage == "Success", startMessage
-        print(startMessage)
-        StartChannelId = context.startLive.json()['data']['channel_id']
-        assert context.channelId == StartChannelId
+        start_message = context.startLive.json()['message']
+        assert start_message == "Success", start_message
+        print(start_message)
+        start_channel_id = context.startLive.json()['data']['channel_id']
+        assert context.channelId == start_channel_id
 
 
     except AssertionError:
@@ -38,10 +38,10 @@ def step_livestream(context):
 
         # print(context.endLive.text)
         print(context.endLive.status_code)
-        endMessage = context.endLive.json()['message']
-        endChannelId = context.endLive.json()['data']['channel_id']
-        assert endMessage == 'Success'
-        assert context.channelId == endChannelId
+        end_message = context.endLive.json()['message']
+        end_channel_id = context.endLive.json()['data']['channel_id']
+        assert end_message == 'Success'
+        assert context.channelId == end_channel_id
         raise AssertionError
 
 @then('end the livestream')
@@ -51,7 +51,7 @@ def step_livestream(context):
 
     print(context.endLive.text)
     print(context.endLive.status_code)
-    endMessage = context.endLive.json()['message']
-    endChannelId = context.endLive.json()['data']['channel_id']
-    assert endMessage == 'Success'
-    assert context.channelId == endChannelId
+    end_message = context.endLive.json()['message']
+    end_channel_id = context.endLive.json()['data']['channel_id']
+    assert end_message == 'Success'
+    assert context.channelId == end_channel_id
